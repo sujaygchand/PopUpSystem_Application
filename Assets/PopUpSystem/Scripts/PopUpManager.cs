@@ -30,10 +30,36 @@ public class PopUpManager : MonoBehaviour
 
 	public Canvas canvas;
 
+	private void OnEnable()
+	{
+#if ENVIRONMENT_DEVELOPMENT
+		Application.logMessageReceived += OnLogReceived;
+#endif
+	}
+
+	private void OnDisable()
+	{
+#if ENVIRONMENT_DEVELOPMENT
+		Application.logMessageReceived -= OnLogReceived;
+#endif
+	}
+
 	private void Update()
 	{
 		availablePopUpObjects.RemoveAll(item => item == null);
 	}
+
+#if ENVIRONMENT_DEVELOPMENT
+	private int errorMessageMaxLength = 400;
+	private void OnLogReceived(string logString, string stackTrace, LogType type)
+	{
+		if(LogType.Error == type || LogType.Exception == type)
+		{
+			string message = stackTrace.Length <= errorMessageMaxLength ? stackTrace : stackTrace.Substring(0, errorMessageMaxLength);
+			DispatchPopUp<ErrorPopUpPanel>(logString, message);
+		}
+	}
+#endif
 
 	private void ClosePopUpWindow(AbstractPopUpPanel abstractPopUpPanel)
 	{
@@ -41,7 +67,6 @@ public class PopUpManager : MonoBehaviour
 		abstractPopUpPanel.Reset();
 		IterateThroughStack();
 	}
-
 	public void CloseActivePopUp()
 	{
 		if (activePopUp == null)
