@@ -20,6 +20,16 @@ public class WebLinkPopUpPanel : AbstractPopUpPanel
 		internalConfirmButtonCallback -= OpenWebLink;
 	}
 
+	public override void DisplayPopUpContent(PopUpPanelData popUpPanelData)
+	{
+		base.DisplayPopUpContent(popUpPanelData);
+
+		if (popUpPanelData.data.Length < 1)
+			return;
+
+		webLink = popUpPanelData.data[0].ToString();
+	}
+
 	private void OpenWebLink(AbstractPopUpPanel self)
 	{
 		Application.OpenURL(webLink);

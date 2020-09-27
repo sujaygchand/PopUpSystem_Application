@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PopUpManager : MonoBehaviour
 {
-
+	
 	public enum PopUpPriority
 	{
 		///<summary>Ignore this, if another pop up is shown</summary>
@@ -51,7 +51,7 @@ public class PopUpManager : MonoBehaviour
 
 	// For Overridering the type of error PopUp
 #if ENVIRONMENT_DEVELOPMENT
-	private int errorMessageMaxLength = 400;
+	private int errorMessageMaxLength = 300;
 	protected virtual void OnLogReceived(string logString, string stackTrace, LogType type)
 	{
 		if(LogType.Error == type || LogType.Exception == type)
