@@ -49,14 +49,15 @@ public class PopUpManager : MonoBehaviour
 		availablePopUpObjects.RemoveAll(item => item == null);
 	}
 
+	// For Overridering the type of error PopUp
 #if ENVIRONMENT_DEVELOPMENT
 	private int errorMessageMaxLength = 400;
-	private void OnLogReceived(string logString, string stackTrace, LogType type)
+	protected virtual void OnLogReceived(string logString, string stackTrace, LogType type)
 	{
 		if(LogType.Error == type || LogType.Exception == type)
 		{
 			string message = stackTrace.Length <= errorMessageMaxLength ? stackTrace : stackTrace.Substring(0, errorMessageMaxLength);
-			DispatchPopUp<ErrorPopUpPanel>(logString, message);
+			DispatchPopUp<BasePopUpPanel>(logString, message);
 		}
 	}
 #endif
@@ -202,14 +203,14 @@ public class PopUpManager : MonoBehaviour
 	private void BindPopUpWindowDelegates(AbstractPopUpPanel displayPanel, AbstractPopUpPanel.OnUIButtonPressed confirmButtonPressed, AbstractPopUpPanel.OnUIButtonPressed cancelButtonPressed)
 	{
 		if (confirmButtonPressed != null)
-			displayPanel.confirmButtonPressedCallback += (panel) => confirmButtonPressed(panel);
+			displayPanel.popUpPanelData.confirmButtonPressedCallback += (panel) => confirmButtonPressed(panel);
 
-		displayPanel.confirmButtonPressedCallback += ClosePopUpWindow;
+		displayPanel.popUpPanelData.confirmButtonPressedCallback += ClosePopUpWindow;
 
 		if (cancelButtonPressed != null)
-			displayPanel.cancelButtonPressedCallback += (panel) => cancelButtonPressed(panel);
+			displayPanel.popUpPanelData.cancelButtonPressedCallback += (panel) => cancelButtonPressed(panel);
 
-		displayPanel.cancelButtonPressedCallback += ClosePopUpWindow;
+		displayPanel.popUpPanelData.cancelButtonPressedCallback += ClosePopUpWindow;
 	}
 
 	/// <summary>

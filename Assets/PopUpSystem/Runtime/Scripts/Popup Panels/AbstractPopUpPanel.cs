@@ -26,8 +26,10 @@ public class AbstractPopUpPanel : AbstractUIPanel
 	public PopUpPanelData popUpPanelData;
 
 	public delegate void OnUIButtonPressed(AbstractPopUpPanel self);
-	public OnUIButtonPressed confirmButtonPressedCallback;
-	public OnUIButtonPressed cancelButtonPressedCallback;
+	
+	// Used for functionality universally needed for the panel
+	public OnUIButtonPressed internalConfirmButtonCallback;
+	public OnUIButtonPressed internalCancelButtonCallback;
 
 #if TM_PRO
 	[SerializeField]
@@ -52,25 +54,30 @@ public class AbstractPopUpPanel : AbstractUIPanel
 
 	protected virtual void Awake()
 	{
-
 		Initialise();
 
 		confirmButton?.onClick.AddListener(OnConfirmButtonPressed);
 		cancelButton?.onClick.AddListener(OnCancelButtonPressed);
 	}
 
-
+	protected virtual void OnDestroy()
+	{
+		confirmButton?.onClick.RemoveListener(OnConfirmButtonPressed);
+		cancelButton?.onClick.RemoveListener(OnCancelButtonPressed);
+	}
 
 	protected void OnConfirmButtonPressed()
 	{
 		Hide();
-		confirmButtonPressedCallback?.Invoke(this);
+		internalConfirmButtonCallback?.Invoke(this);
+		popUpPanelData?.confirmButtonPressedCallback?.Invoke(this);
 	}
 
 	protected void OnCancelButtonPressed()
 	{
 		Hide();
-		cancelButtonPressedCallback?.Invoke(this);
+		internalCancelButtonCallback?.Invoke(this);
+		popUpPanelData?.cancelButtonPressedCallback?.Invoke(this);
 	}
 
 	public virtual void DisplayPopUpContent(PopUpPanelData popUpPanelData)
@@ -82,9 +89,6 @@ public class AbstractPopUpPanel : AbstractUIPanel
 
 		if (messageText)
 			messageText.text = this.popUpPanelData.message;
-
-		confirmButtonPressedCallback += popUpPanelData.confirmButtonPressedCallback;
-		cancelButtonPressedCallback += popUpPanelData.cancelButtonPressedCallback;
 
 		Show();
 	}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ErrorPopUpPanel : AbstractPopUpPanel
+public class LowPriorityUpPanel : AbstractPopUpPanel
 {
 
 }
